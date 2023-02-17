@@ -18,10 +18,19 @@ const getBio = (author: string) =>
     .get(wikipediaApiUrl + encodeURIComponent(author) + "?redirect=false")
     .then((res: AxiosResponse<IBiography>) => res.data);
 
-export default function Home(props: InitialQuotesProps) {
-  const [quotes, setQuotesData] = useState<IQuotes>(props.quotes);
+export default function Home() {
+  const [quotes, setQuotesData] = useState<IQuotes>({
+    _id: "",
+    content: "",
+    author: "",
+    length: 0,
+  });
 
-  const [bio, setBioData] = useState<IBiography>(props.bio);
+  const [bio, setBioData] = useState<IBiography>({
+    title: "",
+    extract: "",
+    thumbnail: undefined,
+  });
 
   const [showButton, setShowButton] = useState(false);
 
@@ -34,6 +43,7 @@ export default function Home(props: InitialQuotesProps) {
   };
 
   useEffect(() => {
+    generateQuotes();
     setTimeout(() => {
       setShowButton(true);
     }, 3000);
@@ -92,16 +102,4 @@ export default function Home(props: InitialQuotesProps) {
       </div>
     </>
   );
-}
-
-export async function getServerSideProps() {
-  const quotes = await getQuotes();
-  const bio = await getBio(quotes.author);
-
-  return {
-    props: {
-      quotes: quotes,
-      bio: bio,
-    },
-  };
 }
